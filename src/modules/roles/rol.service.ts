@@ -2,6 +2,8 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolRepository } from './rol.repository';
 import { Rol } from './rol.entity';
+import { ReadRoleDto, CreateRoleDto } from './dto';
+import { plainToClass } from 'class-transformer';
 
 
 @Injectable()
@@ -12,7 +14,7 @@ export class RolService {
         private readonly _rolRepository: RolRepository
     ) { }
 
-    async getRol(idRol: number): Promise<Rol> {
+    async getRol(idRol: number): Promise<ReadRoleDto> {
 
         if (!idRol) {
             throw new BadRequestException('idRol must be sent');
@@ -24,39 +26,53 @@ export class RolService {
             throw new NotFoundException();
         }
 
-        return rol;
+        return plainToClass(ReadRoleDto, rol);
 
     }
 
-    async getRoles(): Promise<Rol[]> {
+    async getRoles(): Promise<ReadRoleDto[]> {
 
         const roles: Rol[] = await this._rolRepository.find();
 
-        return roles;
+        return roles.map((rol: Rol) => plainToClass(ReadRoleDto, rol));
 
     }
 
-    async createRol(rol: Rol): Promise<Rol> {
+    async createRol(rol: Rol): Promise<ReadRoleDto> {
 
         const createdRol: Rol = await this._rolRepository.save(rol);
 
-        return createdRol;
+        return plainToClass(ReadRoleDto, createdRol);
 
     }
 
-    async updateRol(idRol: number, rol: Rol): Promise<void> {
-        await this._rolRepository.update(idRol, rol);
-    }
+    async updateRol(idRol: number, rol: Rol): Promise<ReadRoleDto> {
 
-    async deleteRol(idRol: number): Promise<void> {
+        const foundRole: Rol = await this._rolRepository.findOne(idRol);
 
-        const rolExists = await this._rolRepository.findOne(idRol);
-
-        if (!rolExists) {
-            throw new NotFoundException();
+        if (!foundRole) {
+            throw new NotFoundException('El rol no existe');
         }
 
-        this._rolRepository.remove(rolExists);
+        foundRole.nombre = rol.nombre;
+
+        const updatedRole = await this._rolRepository.save(foundRole);
+
+        return plainToClass(ReadRoleDto, updatedRole);
+
+    }
+
+    async deleteRol(idRol: number): Promise<any> {
+
+        const roleExists = await this._rolRepository.findOne(idRol);
+
+        if (!roleExists) {
+            throw new NotFoundException('El rol no existe');
+        }
+
+        this._rolRepository.remove(roleExists);
+
+        return { deleted: true };
 
     }
 

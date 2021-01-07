@@ -1,38 +1,41 @@
-import { Controller, Get, Param, Post, Body, Patch, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Patch, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CuentaService } from './cuenta.service';
 import { Cuenta } from './cuenta.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { ReadCuentaDto } from './dto';
 
+// @UseGuards(AuthGuard())
 @Controller('cuentas')
 export class CuentaController {
 
     constructor(private readonly _cuentaService: CuentaService) { }
 
     @Get(':idCuenta')
-    async getCuenta(@Param('idCuenta', ParseIntPipe) idCuenta: number): Promise<Cuenta> {
-        const cuenta = await this._cuentaService.getCuenta(idCuenta);
-        return cuenta;
+    getCuenta(@Param('idCuenta', ParseIntPipe) idCuenta: number): Promise<ReadCuentaDto> {
+        return this._cuentaService.getCuenta(idCuenta);
     }
 
     @Get()
-    async getCuentas(): Promise<Cuenta[]> {
-        const cuentas = await this._cuentaService.getCuentas();
-        return cuentas;
-    }
-
-    @Post()
-    async createCuenta(@Body() cuenta: Cuenta): Promise<Cuenta> {
-        const createdCuenta = await this._cuentaService.createCuenta(cuenta);
-        return createdCuenta;
+    getCuentas(): Promise<ReadCuentaDto[]> {
+        return this._cuentaService.getCuentas();
     }
 
     @Patch(':idCuenta')
-    async updateCuenta(@Param('idCuenta', ParseIntPipe) idCuenta: number, @Body() cuenta: Cuenta): Promise<void> {
-        await this._cuentaService.updateCuenta(idCuenta, cuenta);
+    updateCuenta(@Param('idCuenta', ParseIntPipe) idCuenta: number, @Body() cuenta: Cuenta): Promise<ReadCuentaDto> {
+        return this._cuentaService.updateCuenta(idCuenta, cuenta);
     }
 
     @Delete(':idCuenta')
-    async deleteCuenta(@Param('idCuenta', ParseIntPipe) idCuenta: number): Promise<void> {
-        await this._cuentaService.deleteCuenta(idCuenta);
+    deleteCuenta(@Param('idCuenta', ParseIntPipe) idCuenta: number): Promise<any> {
+        return this._cuentaService.deleteCuenta(idCuenta);
+    }
+
+    @Post('setRole/:idCuenta/:idRol')
+    setRoleToUser(
+        @Param('idCuenta', ParseIntPipe) idCuenta: number,
+        @Param('idRol', ParseIntPipe) idRol: number,
+    ): Promise<any> {
+        return this._cuentaService.setRoleToUser(idCuenta, idRol);
     }
 
 }

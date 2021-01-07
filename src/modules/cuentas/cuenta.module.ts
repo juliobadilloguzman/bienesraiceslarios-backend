@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CuentaRepository } from './cuenta.repository';
 import { CuentaService } from './cuenta.service';
-import { SharedModule } from '../../shared/shared.module';
 import { CuentaController } from './cuenta.controller';
+import { AuthModule } from '../auth/auth.module';
+import { RolRepository } from '../roles/rol.repository';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([CuentaRepository]), SharedModule],
+    imports: [TypeOrmModule.forFeature([CuentaRepository, RolRepository]), AuthModule],
     providers: [CuentaService],
     controllers: [CuentaController]
 })

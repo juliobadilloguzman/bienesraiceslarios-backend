@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { Configuration } from './config/config.keys';
@@ -8,11 +6,12 @@ import { DatabaseModule } from './database/database.module';
 import { CuentaModule } from './modules/cuentas/cuenta.module';
 import { UsuarioModule } from './modules/usuarios/usuario.module';
 import { RolModule } from './modules/roles/rol.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, CuentaModule, UsuarioModule, RolModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [ConfigModule, DatabaseModule, CuentaModule, UsuarioModule, RolModule, AuthModule],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
 

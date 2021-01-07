@@ -1,5 +1,5 @@
 export enum RoleType {
-    ADMIN = "ADMINISTRADOR",
+    ADMINISTRADOR = "ADMINISTRADOR",
     CLIENTE = "CLIENTE",
     CAPTURISTA = "CAPTURISTA"
 }
