@@ -20,7 +20,7 @@ export class UsuarioController {
     }
 
     @Post()
-    createRol(@Body() usuario: Usuario): Promise<ReadUsuarioDto> {
+    createUsuario(@Body() usuario: Usuario): Promise<ReadUsuarioDto> {
         return this._usuarioService.createUsuario(usuario);
     }
 

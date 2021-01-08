@@ -1,6 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Usuario } from '../usuarios/usuario.entity';
 import { Rol } from '../roles/rol.entity';
+import { Estatus } from '../../shared/estatus.enum';
 
 @Entity('cuentas')
 export class Cuenta extends BaseEntity {
@@ -14,7 +15,7 @@ export class Cuenta extends BaseEntity {
     @Column({ type: 'varchar', nullable: false })
     password: string;
 
-    @Column({ type: 'varchar', default: 'ACTIVO', length: 10 })
+    @Column({ type: 'varchar', default: Estatus.ACTIVO, length: 20 })
     estatus: string;
 
     @CreateDateColumn({ type: 'timestamp' })

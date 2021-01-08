@@ -26,7 +26,7 @@ export class AuthService {
         });
 
         if (emailExists) {
-            throw new ConflictException('Email already exists');
+            throw new ConflictException('El email ya tiene asociada una cuenta');
         }
 
         return this._authRepository.signUp(signupDto);
@@ -42,13 +42,13 @@ export class AuthService {
         });
 
         if (!cuenta) {
-            throw new NotFoundException('Account does not exists');
+            throw new NotFoundException('La cuenta no existe');
         }
 
         const isMatch = await compare(password, cuenta.password);
 
         if (!isMatch) {
-            throw new UnauthorizedException('Invalid credentials');
+            throw new UnauthorizedException('Las credenciales no son validas');
         }
 
         const payload: IJwtPayload = {

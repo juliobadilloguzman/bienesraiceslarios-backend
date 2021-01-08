@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { ConfigModule } from '../../config/config.module';
 import { Configuration } from '../../config/config.keys';
 import { UsuarioRepository } from '../usuarios/usuario.repository';
+import { UsuarioService } from '../usuarios/usuario.service';
 
 
 @Module({
@@ -29,7 +30,7 @@ import { UsuarioRepository } from '../usuarios/usuario.repository';
       }
     })
   ],
-  providers: [AuthService, ConfigService, JwtStrategy],
+  providers: [AuthService, ConfigService, JwtStrategy, UsuarioService],
   controllers: [AuthController],
   exports: [JwtStrategy, PassportModule]
 })

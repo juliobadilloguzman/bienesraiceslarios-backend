@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ReadUsuarioDto } from './dto/readUsuario';
 import { Usuario } from './usuario.entity';
 import { plainToClass } from 'class-transformer';
+import { CreateUsuarioDto } from './dto/createUsuario.dto';
 
 @Injectable()
 export class UsuarioService {
@@ -37,7 +38,7 @@ export class UsuarioService {
 
     }
 
-    async createUsuario(usuario: Usuario): Promise<ReadUsuarioDto> {
+    async createUsuario(usuario: CreateUsuarioDto): Promise<ReadUsuarioDto> {
 
         const createdUsuario: Usuario = await this._usuarioRepository.save(usuario);
 

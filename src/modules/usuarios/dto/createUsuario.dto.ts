@@ -35,6 +35,6 @@ export class CreateUsuarioDto {
     readonly telefonoCelular: string;
 
     @IsEmail()
-    readonlycorreo: string;
+    readonly correo: string;
 
 }

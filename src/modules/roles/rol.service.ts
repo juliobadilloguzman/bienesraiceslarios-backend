@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolRepository } from './rol.repository';
 import { Rol } from './rol.entity';
@@ -16,14 +16,14 @@ export class RolService {
 
     async getRol(idRol: number): Promise<ReadRoleDto> {
 
-        if (!idRol) {
-            throw new BadRequestException('idRol must be sent');
+        if (!idRol || idRol === undefined) {
+            throw new BadRequestException('El idRol no puede ser nulo');
         }
 
         const rol: Rol = await this._rolRepository.findOne(idRol);
 
-        if (!rol) {
-            throw new NotFoundException();
+        if (!rol || rol === undefined) {
+            throw new NotFoundException('El rol no existe');
         }
 
         return plainToClass(ReadRoleDto, rol);
@@ -39,6 +39,12 @@ export class RolService {
     }
 
     async createRol(rol: Rol): Promise<ReadRoleDto> {
+
+        const foundRol = await this._rolRepository.findOne(null, { where: { nombre: rol.nombre } });
+
+        if (foundRol) {
+            throw new ConflictException('El nombre del rol ya existe');
+        }
 
         const createdRol: Rol = await this._rolRepository.save(rol);
 

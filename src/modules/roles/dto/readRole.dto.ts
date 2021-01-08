@@ -11,7 +11,6 @@ export class ReadRoleDto {
     @Expose()
     @IsNotEmpty()
     @IsString()
-    @MaxLength(20, { message: "El rol excede los limites de caracteres" })
     readonly nombre: string;
 
 }
