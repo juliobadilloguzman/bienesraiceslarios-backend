@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CuentaRepository } from './cuenta.repository';
 import { Cuenta } from './cuenta.entity';
@@ -20,14 +20,14 @@ export class CuentaService {
 
     async getCuenta(idCuenta: number): Promise<ReadCuentaDto> {
 
-        if (!idCuenta) {
-            throw new BadRequestException('idCuenta must be sent');
+        if (!idCuenta || idCuenta === undefined) {
+            throw new BadRequestException('El idCuenta no puede ser nulo');
         }
 
         const cuenta: Cuenta = await this._cuentaRepository.findOne(idCuenta, { where: { estatus: Estatus.ACTIVO } });
 
-        if (!cuenta) {
-            throw new NotFoundException();
+        if (!cuenta || cuenta === undefined) {
+            throw new NotFoundException('La cuenta no existe');
         }
 
         return plainToClass(ReadCuentaDto, cuenta);
@@ -47,8 +47,14 @@ export class CuentaService {
 
         const foundCuenta = await this._cuentaRepository.findOne(idCuenta, { where: { estatus: Estatus.ACTIVO } });
 
-        if (!foundCuenta) {
+        if (!foundCuenta || foundCuenta === undefined) {
             throw new NotFoundException('La Cuenta no existe');
+        }
+
+        const foundEmailCuenta = await this._cuentaRepository.findOne(null, { where: { email: cuenta.email } });
+
+        if (foundEmailCuenta) {
+            throw new ConflictException('El correo ya esta en uso');
         }
 
         foundCuenta.email = cuenta.email;
@@ -67,13 +73,13 @@ export class CuentaService {
 
         const cuentaExists = await this._cuentaRepository.findOne(idCuenta, { where: { estatus: Estatus.ACTIVO } });
 
-        if (!cuentaExists) {
+        if (!cuentaExists || cuentaExists === undefined) {
             throw new NotFoundException('La Cuenta no existe');
         }
 
         this._cuentaRepository.update(idCuenta, { estatus: Estatus.INACTIVO });
 
-        return { deleted: true }
+        return { deleted: true };
 
     }
 
@@ -83,14 +89,14 @@ export class CuentaService {
             where: { estatus: Estatus.ACTIVO },
         });
 
-        if (!cuentaExists) {
-            throw new NotFoundException('Account does not exists');
+        if (!cuentaExists || cuentaExists === undefined) {
+            throw new NotFoundException('La Cuenta no existe');
         }
 
         const roleExist = await this._rolRepository.findOne(idRol);
 
-        if (!roleExist) {
-            throw new NotFoundException('Role does not exist');
+        if (!roleExist || roleExist === undefined) {
+            throw new NotFoundException('El rol no existe');
         }
 
         cuentaExists.roles.push(roleExist);

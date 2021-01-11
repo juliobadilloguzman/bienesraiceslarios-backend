@@ -1,4 +1,6 @@
-import { BaseEntity, Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { BaseEntity, Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
+import { Terreno } from '../terrenos/terreno.entity';
+import { Mensualidad } from '../mensualidades/mensualidad.entity';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
@@ -36,5 +38,10 @@ export class Usuario extends BaseEntity {
     @Column({ type: 'varchar', length: 80, nullable: true })
     correo: string;
 
+    @OneToMany(() => Terreno, terreno => terreno.usuario)
+    terrenos: Terreno[];
+
+    @OneToMany(() => Mensualidad, mensualidad => mensualidad.usuario)
+    mensualidades: Mensualidad[];
 
 }

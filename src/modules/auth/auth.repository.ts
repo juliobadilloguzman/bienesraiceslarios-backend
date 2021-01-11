@@ -11,7 +11,7 @@ import { UsuarioService } from "../usuarios/usuario.service";
 export class AuthRepository extends Repository<Cuenta>{
 
 
-    async signUp(signUpDto: SignUpDto) {
+    async signUp(signUpDto: SignUpDto): Promise<any> {
 
         const { email, password, nombre, apellidoPaterno, apellidoMaterno, calle, colonia, municipio, codigoPostal, telefonoFijo, telefonoCelular, correo } = signUpDto;
 
@@ -41,6 +41,8 @@ export class AuthRepository extends Repository<Cuenta>{
         cuenta.password = await hash(password, salt);
 
         await cuenta.save();
+
+        return { created: true }
 
     }
 

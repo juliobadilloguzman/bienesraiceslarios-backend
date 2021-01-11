@@ -13,4 +13,8 @@ export class ReadRoleDto {
     @IsString()
     readonly nombre: string;
 
+    @Expose()
+    @IsString()
+    readonly estatus: string;
+
 }

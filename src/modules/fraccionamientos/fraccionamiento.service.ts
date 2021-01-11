@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ReadFraccionamientoDto } from './dto/readFraccionamiento.dto';
 import { Fraccionamiento } from './fraccionamiento.entity';
 import { plainToClass } from 'class-transformer';
+import { CreateFraccionamientoDto } from './dto';
 
 @Injectable()
 export class FraccionamientoService {
@@ -39,7 +40,7 @@ export class FraccionamientoService {
 
     }
 
-    async createFraccionamiento(fraccionamiento: Fraccionamiento): Promise<ReadFraccionamientoDto> {
+    async createFraccionamiento(fraccionamiento: CreateFraccionamientoDto): Promise<ReadFraccionamientoDto> {
 
         const foundFraccionamiento = await this._fraccionamientoRepository.findOne(null, { where: { nombre: fraccionamiento.nombre } });
 
@@ -59,6 +60,12 @@ export class FraccionamientoService {
 
         if (!foundFraccionamiento || foundFraccionamiento === undefined) {
             throw new NotFoundException('El fraccionamiento no existe');
+        }
+
+        const fraccionamientoNameExists: Fraccionamiento = await this._fraccionamientoRepository.findOne(null, { where: { nombre: fraccionamiento.nombre } });
+
+        if (fraccionamientoNameExists) {
+            throw new ConflictException('El nombre del fraccionamiento ya existe');
         }
 
         foundFraccionamiento.nombre = fraccionamiento.nombre;

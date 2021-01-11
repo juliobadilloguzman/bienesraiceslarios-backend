@@ -4,5 +4,6 @@ export interface IJwtPayload {
     idCuenta: number;
     email: string;
     roles: RoleType[];
-    expiresIn?: Date;
+    iat?: Date;
+    expiresIn?: number;
 }

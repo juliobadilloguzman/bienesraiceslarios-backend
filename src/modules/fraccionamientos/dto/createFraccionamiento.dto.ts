@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength, IsNumber } from "class-validator";
 
-export class CreateFraccionamienoDto {
+export class CreateFraccionamientoDto {
 
     @IsNumber()
     readonly idFraccionamiento: number;

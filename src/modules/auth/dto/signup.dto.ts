@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEmail, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, IsOptional, MinLength, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateUsuarioDto } from 'src/modules/usuarios/dto/createUsuario.dto';
 
@@ -7,12 +7,14 @@ export class SignUpDto {
     //Cuenta
     @IsNotEmpty()
     @IsEmail()
-    email: string;
+    readonly email: string;
 
     @IsNotEmpty()
+    @MinLength(6)
     @IsString()
-    password: string;
+    readonly password: string;
 
+    //Usuario
     @IsNotEmpty()
     @IsString()
     readonly nombre: string;

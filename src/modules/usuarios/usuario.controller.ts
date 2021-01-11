@@ -1,8 +1,7 @@
-import { Controller, ParseIntPipe, Param, Get, Post, Body } from '@nestjs/common';
+import { Controller, ParseIntPipe, Param, Get, Post, Body, Patch, Delete } from '@nestjs/common';
 import { UsuarioService } from './usuario.service';
-import { ReadUsuarioDto } from './dto/readUsuario';
-import { Cuenta } from '../cuentas/cuenta.entity';
-import { Usuario } from './usuario.entity';
+import { ReadUsuarioDto } from './dto/readUsuario.dto';
+import { CreateUsuarioDto, UpdateUsuarioDto } from './dto';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -20,8 +19,18 @@ export class UsuarioController {
     }
 
     @Post()
-    createUsuario(@Body() usuario: Usuario): Promise<ReadUsuarioDto> {
+    createUsuario(@Body() usuario: Partial<CreateUsuarioDto>): Promise<ReadUsuarioDto> {
         return this._usuarioService.createUsuario(usuario);
+    }
+
+    @Patch(':idUsuario')
+    updateRol(@Param('idUsuario', ParseIntPipe) idUsuario: number, @Body() usuario: Partial<UpdateUsuarioDto>): Promise<ReadUsuarioDto> {
+        return this._usuarioService.updateUsuario(idUsuario, usuario);
+    }
+
+    @Delete(':idUsuario')
+    deleteRol(@Param('idUsuario', ParseIntPipe) idUsuario: number): Promise<any> {
+        return this._usuarioService.deleteUsuario(idUsuario);
     }
 
 }

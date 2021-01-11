@@ -33,7 +33,7 @@ export class AuthService {
 
     }
 
-    async login(loginDto: LoginDto): Promise<{ token: string }> {
+    async login(loginDto: LoginDto): Promise<{ token: string, expiresIn: number }> {
 
         const { email, password } = loginDto;
 
@@ -41,7 +41,7 @@ export class AuthService {
             where: { email },
         });
 
-        if (!cuenta) {
+        if (!cuenta || cuenta == undefined) {
             throw new NotFoundException('La cuenta no existe');
         }
 
@@ -59,7 +59,8 @@ export class AuthService {
 
         const token = await this._jwtService.sign(payload);
 
-        return { token };
+
+        return { token, expiresIn: 3600 };
     }
 
 }

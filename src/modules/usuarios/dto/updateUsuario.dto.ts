@@ -1,11 +1,7 @@
-import { IsString, IsNumber, IsEmail, IsNotEmpty } from "class-validator";
+import { IsString, IsEmail, IsNotEmpty } from "class-validator";
 
-export class CreateUsuarioDto {
+export class UpdateUsuarioDto {
 
-    @IsNumber()
-    readonly idUsuario: number;
-
-    @IsNotEmpty({ message: 'El nombre es obligatorio' })
     @IsString()
     readonly nombre: string;
 

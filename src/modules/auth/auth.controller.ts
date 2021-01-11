@@ -9,9 +9,8 @@ export class AuthController {
 
     @Post('/signup')
     @UsePipes(ValidationPipe)
-    async signUp(@Body() signupDto: SignUpDto): Promise<any> {
-        await this._authService.signUp(signupDto);
-        return { created: true };
+    signUp(@Body() signupDto: SignUpDto): Promise<any> {
+        return this._authService.signUp(signupDto);
     }
 
     @Post('/login')

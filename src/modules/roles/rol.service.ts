@@ -56,8 +56,14 @@ export class RolService {
 
         const foundRole: Rol = await this._rolRepository.findOne(idRol);
 
-        if (!foundRole) {
+        if (!foundRole || foundRole === undefined) {
             throw new NotFoundException('El rol no existe');
+        }
+
+        const rolNameExists: Rol = await this._rolRepository.findOne(null, { where: { nombre: rol.nombre } });
+
+        if (rolNameExists) {
+            throw new ConflictException('El nombre del rol ya existe');
         }
 
         foundRole.nombre = rol.nombre;
@@ -72,7 +78,7 @@ export class RolService {
 
         const roleExists = await this._rolRepository.findOne(idRol);
 
-        if (!roleExists) {
+        if (!roleExists || roleExists === undefined) {
             throw new NotFoundException('El rol no existe');
         }
 
