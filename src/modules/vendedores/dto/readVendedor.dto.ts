@@ -1,5 +1,7 @@
 import { IsString, IsNumber, IsEmail } from "class-validator";
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
+import { ReadTerrenoDto } from "src/modules/terrenos/dto";
+import { Terreno } from "../../terrenos/terreno.entity";
 
 @Exclude()
 export class ReadVendedorDto {
@@ -19,6 +21,10 @@ export class ReadVendedorDto {
     @Expose()
     @IsString()
     readonly apellidoMaterno: string;
+
+    @Expose()
+    @IsString()
+    readonly telefono: string;
 
     @Expose()
     @IsEmail()

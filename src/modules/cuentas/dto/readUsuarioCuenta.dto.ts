@@ -22,4 +22,12 @@ export class ReadUsuarioCuentaDto {
     @IsString()
     readonly apellidoMaterno: string;
 
+    @Expose()
+    @IsString()
+    readonly correo: string;
+
+    @Expose()
+    @IsString()
+    readonly telefono: string;
+
 }

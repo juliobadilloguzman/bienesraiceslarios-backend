@@ -6,13 +6,20 @@ import { Usuario } from './usuario.entity';
 import { plainToClass } from 'class-transformer';
 import { CreateUsuarioDto } from './dto/createUsuario.dto';
 import { UpdateUsuarioDto } from './dto/updateUsuario.dto';
+import { Cuenta } from '../cuentas/cuenta.entity';
+import { CuentaRepository } from '../cuentas/cuenta.repository';
+import { Estatus } from '../../shared/estatus.enum';
+import { ReadCuentaDto } from '../cuentas/dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class UsuarioService {
 
     constructor(
         @InjectRepository(UsuarioRepository)
-        private readonly _usuarioRepository: UsuarioRepository
+        private readonly _usuarioRepository: UsuarioRepository,
+        @InjectRepository(CuentaRepository)
+        private readonly _cuentaRepository: CuentaRepository
     ) { }
 
     async getUsuario(idUsuario: number): Promise<ReadUsuarioDto> {
@@ -36,6 +43,78 @@ export class UsuarioService {
         const usuarios: Usuario[] = await this._usuarioRepository.find();
 
         return usuarios.map((usuario: Usuario) => plainToClass(ReadUsuarioDto, usuario));
+
+    }
+
+    async getClientes(): Promise<any> {
+
+        const cuentas = await this
+            ._cuentaRepository
+            .createQueryBuilder('cuentas')
+            .innerJoin(
+                'cuentas.roles',
+                'roles',
+                'roles.nombre = :nombre',
+                { nombre: 'CLIENTE' }
+            ).getMany();
+
+
+        const usuarios: any[] = [];
+
+        for (const element of cuentas) {
+            let user = await this._usuarioRepository.find({ where: { correo: element.email } });
+            usuarios.push(user[0]);
+        }
+
+        return usuarios.map((cuenta: Usuario) => plainToClass(ReadUsuarioDto, cuenta));
+
+    }
+
+    async getAdministradores(): Promise<any> {
+
+        const cuentas = await this
+            ._cuentaRepository
+            .createQueryBuilder('cuentas')
+            .innerJoin(
+                'cuentas.roles',
+                'roles',
+                'roles.nombre = :nombre',
+                { nombre: 'ADMINISTRADOR' }
+            ).getMany();
+
+
+        const usuarios: any[] = [];
+
+        for (const element of cuentas) {
+            let user = await this._usuarioRepository.find({ where: { correo: element.email } });
+            usuarios.push(user[0]);
+        }
+
+        return usuarios.map((cuenta: Usuario) => plainToClass(ReadUsuarioDto, cuenta));
+
+    }
+
+    async getCapturistas(): Promise<any> {
+
+        const cuentas = await this
+            ._cuentaRepository
+            .createQueryBuilder('cuentas')
+            .innerJoin(
+                'cuentas.roles',
+                'roles',
+                'roles.nombre = :nombre',
+                { nombre: 'CAPTURISTA' }
+            ).getMany();
+
+
+        const usuarios: any[] = [];
+
+        for (const element of cuentas) {
+            let user = await this._usuarioRepository.find({ where: { correo: element.email } });
+            usuarios.push(user[0]);
+        }
+
+        return usuarios.map((cuenta: Usuario) => plainToClass(ReadUsuarioDto, cuenta));
 
     }
 

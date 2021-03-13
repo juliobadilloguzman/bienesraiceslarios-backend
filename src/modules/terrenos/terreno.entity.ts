@@ -38,7 +38,7 @@ export class Terreno extends BaseEntity {
     @Column({ type: 'float', nullable: false })
     saldo: number;
 
-    @Column({ type: 'date', nullable: false })
+    @Column({ type: 'datetime', nullable: false })
     fechaVenta: Date;
 
     @Column({ type: 'int', nullable: true })
@@ -56,11 +56,20 @@ export class Terreno extends BaseEntity {
     @Column({ type: 'tinyint', nullable: true })
     pagoDeslinde: number;
 
-    @Column({ type: 'date', nullable: true })
+    @Column({ type: 'datetime', nullable: true })
+    fechaPagoDeslinde: string;
+
+    @Column({ type: 'float', nullable: true })
+    montoDeslinde: number;
+
+    @Column({ type: 'datetime', nullable: true })
     fechaPrimeraMensualidad: Date;
 
     @Column({ type: 'text', nullable: true })
     comentariosAdicionales: string;
+
+    @Column({ type: 'varchar', default: Estatus.AL_CORRIENTE, length: 20 })
+    estatusTerreno: string;
 
     @Column({ type: 'varchar', default: Estatus.ACTIVO, length: 20 })
     estatus: string;

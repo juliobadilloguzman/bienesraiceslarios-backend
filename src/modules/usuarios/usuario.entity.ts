@@ -1,6 +1,7 @@
 import { BaseEntity, Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
 import { Terreno } from '../terrenos/terreno.entity';
 import { Mensualidad } from '../mensualidades/mensualidad.entity';
+import { Estatus } from '../../shared/estatus.enum';
 
 @Entity('usuarios')
 export class Usuario extends BaseEntity {
@@ -19,6 +20,12 @@ export class Usuario extends BaseEntity {
 
     @Column({ type: 'varchar', length: 80, nullable: true })
     calle: string;
+
+    @Column({ type: 'varchar', length: 10, nullable: true })
+    numeroExterior: string;
+
+    @Column({ type: 'varchar', length: 10, nullable: true })
+    numeroInterior: string;
 
     @Column({ type: 'varchar', length: 80, nullable: true })
     colonia: string;
@@ -43,5 +50,8 @@ export class Usuario extends BaseEntity {
 
     @OneToMany(() => Mensualidad, mensualidad => mensualidad.usuario)
     mensualidades: Mensualidad[];
+
+    @Column({ type: 'varchar', default: Estatus.ACTIVO, length: 20 })
+    estatus: string;
 
 }

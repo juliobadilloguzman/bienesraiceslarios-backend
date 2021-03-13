@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty, IsDate } from "class-validator";
+import { IsString, IsNumber, IsNotEmpty, IsDate, IsOptional } from "class-validator";
 
 export class CreateMensualidadDto {
 
@@ -10,8 +10,11 @@ export class CreateMensualidadDto {
     readonly numeroMensualidad: number;
 
     @IsNotEmpty()
+    readonly numeroRecibo: string;
+
+    @IsNotEmpty()
     @IsDate()
-    readonly fechaPago: Date;
+    readonly fechaPago: string;
 
     @IsNotEmpty()
     @IsNumber()
@@ -30,7 +33,19 @@ export class CreateMensualidadDto {
 
     @IsNotEmpty()
     @IsString()
+    readonly estatusPago: string;
+
+    @IsNotEmpty()
+    @IsString()
     readonly estatus: string;
+
+    @IsOptional()
+    @IsNumber()
+    readonly interes: number;
+
+    @IsOptional()
+    @IsString()
+    readonly estatusInteres: string;
 
     @IsNotEmpty()
     @IsNumber()

@@ -1,4 +1,5 @@
 import { IsString, IsNumber, IsNotEmpty, IsDate } from "class-validator";
+import { Vendedor } from "src/modules/vendedores/vendedor.entity";
 
 export class UpdateTerrenoDto {
 
@@ -53,6 +54,12 @@ export class UpdateTerrenoDto {
     @IsNumber()
     readonly pagoDeslinde: number;
 
+    @IsNumber()
+    readonly fechaPagoDeslinde: string;
+
+    @IsNumber()
+    readonly montoDeslinde: number;
+
     @IsDate()
     readonly fechaPrimeraMensualidad: Date;
 
@@ -69,5 +76,7 @@ export class UpdateTerrenoDto {
     @IsNotEmpty()
     @IsNumber()
     readonly usuarioIdUsuario: number;
+
+    readonly vendedores: Vendedor[];
 
 }

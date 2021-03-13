@@ -14,8 +14,11 @@ export class Mensualidad extends BaseEntity {
     @Column({ type: 'int', nullable: false })
     numeroMensualidad: number;
 
-    @Column({ type: 'date', nullable: false })
-    fechaPago: Date;
+    @Column({ type: 'varchar', nullable: true })
+    numeroRecibo: string;
+
+    @Column({ type: 'datetime', nullable: true })
+    fechaPago: string;
 
     @Column({ type: 'float', nullable: false })
     monto: number;
@@ -23,13 +26,22 @@ export class Mensualidad extends BaseEntity {
     @Column({ type: 'mediumtext', nullable: true })
     cantidadConLetra: string;
 
-    @Column({ type: 'varchar', nullable: false })
+    @Column({ type: 'varchar', nullable: true })
     mes: string;
 
-    @Column({ type: 'varchar', nullable: false })
+    @Column({ type: 'varchar', nullable: true })
     formaPago: string;
 
     @Column({ type: 'varchar', nullable: false })
+    estatusPago: string;
+
+    @Column({ type: 'float', nullable: true })
+    interes: number;
+
+    @Column({ type: 'varchar', nullable: true })
+    estatusInteres: string;
+
+    @Column({ type: 'varchar', default: Estatus.ACTIVO, length: 20 })
     estatus: string;
 
     @ManyToOne(() => Usuario, usuario => usuario.mensualidades, { eager: true })

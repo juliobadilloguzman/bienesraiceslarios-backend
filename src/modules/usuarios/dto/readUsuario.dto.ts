@@ -30,6 +30,14 @@ export class ReadUsuarioDto {
 
     @Expose()
     @IsString()
+    readonly numeroExterior: string;
+
+    @Expose()
+    @IsString()
+    readonly numeroInterior: string;
+
+    @Expose()
+    @IsString()
     readonly municipio: string;
 
     @Expose()
@@ -46,6 +54,10 @@ export class ReadUsuarioDto {
 
     @Expose()
     @IsEmail()
-    readonlycorreo: string;
+    readonly correo: string;
+
+    @Expose()
+    @IsString()
+    readonly estatus: string;
 
 }

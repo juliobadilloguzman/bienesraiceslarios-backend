@@ -11,11 +11,12 @@ import { ConfigModule } from '../../config/config.module';
 import { Configuration } from '../../config/config.keys';
 import { UsuarioRepository } from '../usuarios/usuario.repository';
 import { UsuarioService } from '../usuarios/usuario.service';
+import { CuentaRepository } from '../cuentas/cuenta.repository';
 
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AuthRepository, UsuarioRepository]),
+    TypeOrmModule.forFeature([AuthRepository, UsuarioRepository, CuentaRepository]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

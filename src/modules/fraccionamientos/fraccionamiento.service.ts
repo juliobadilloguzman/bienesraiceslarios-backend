@@ -5,6 +5,7 @@ import { ReadFraccionamientoDto } from './dto/readFraccionamiento.dto';
 import { Fraccionamiento } from './fraccionamiento.entity';
 import { plainToClass } from 'class-transformer';
 import { CreateFraccionamientoDto } from './dto';
+import { Estatus } from '../../shared/estatus.enum';
 
 @Injectable()
 export class FraccionamientoService {
@@ -22,9 +23,7 @@ export class FraccionamientoService {
 
         const fraccionamiento: Fraccionamiento = await this._fraccionamientoRepository.findOne(idFraccionamiento);
 
-        console.log(fraccionamiento);
-
-        if (!idFraccionamiento || fraccionamiento === undefined) {
+        if (!fraccionamiento || fraccionamiento === undefined) {
             throw new NotFoundException('El fraccionamiento no existe');
         }
 
@@ -34,7 +33,7 @@ export class FraccionamientoService {
 
     async getFraccionamientos(): Promise<ReadFraccionamientoDto[]> {
 
-        const fraccionamientos: Fraccionamiento[] = await this._fraccionamientoRepository.find();
+        const fraccionamientos: Fraccionamiento[] = await this._fraccionamientoRepository.find({ where: { estatus: Estatus.ACTIVO } });
 
         return fraccionamientos.map((fraccionamiento: Fraccionamiento) => plainToClass(ReadFraccionamientoDto, fraccionamiento));
 
@@ -62,13 +61,11 @@ export class FraccionamientoService {
             throw new NotFoundException('El fraccionamiento no existe');
         }
 
-        const fraccionamientoNameExists: Fraccionamiento = await this._fraccionamientoRepository.findOne(null, { where: { nombre: fraccionamiento.nombre } });
-
-        if (fraccionamientoNameExists) {
-            throw new ConflictException('El nombre del fraccionamiento ya existe');
-        }
-
         foundFraccionamiento.nombre = fraccionamiento.nombre;
+        foundFraccionamiento.regimen = fraccionamiento.regimen;
+        foundFraccionamiento.estado = fraccionamiento.estado;
+        foundFraccionamiento.municipio = fraccionamiento.municipio;
+        foundFraccionamiento.ubicacionMaps = fraccionamiento.ubicacionMaps;
 
         const updatedFraccionamiento = await this._fraccionamientoRepository.save(foundFraccionamiento);
 
@@ -84,7 +81,8 @@ export class FraccionamientoService {
             throw new NotFoundException('El fraccionamiento no existe');
         }
 
-        this._fraccionamientoRepository.remove(fraccionamientoExists);
+        fraccionamientoExists.estatus = Estatus.ELIMINADO;
+        fraccionamientoExists.save();
 
         return { deleted: true };
 

@@ -8,6 +8,11 @@ import { CreateTerrenoDto } from './dto/createTerreno.dto';
 import { UsuarioRepository } from '../usuarios/usuario.repository';
 import { FraccionamientoRepository } from '../fraccionamientos/fraccionamiento.repository';
 import { VendedorRepository } from '../vendedores/vendedor.repository';
+import { Usuario } from '../usuarios/usuario.entity';
+import { Estatus } from '../../shared/estatus.enum';
+import { Mensualidad } from '../mensualidades/mensualidad.entity';
+import { UpdateTerrenoDto } from './dto/updateTerreno.dto';
+import { Fraccionamiento } from '../fraccionamientos/fraccionamiento.entity';
 
 @Injectable()
 export class TerrenosService {
@@ -41,7 +46,21 @@ export class TerrenosService {
 
     async getTerrenos(): Promise<ReadTerrenoDto[]> {
 
-        const terrenos: Terreno[] = await this._terrenoRepository.find();
+        const terrenos: Terreno[] = await this._terrenoRepository.find({where: {estatus: 'ACTIVO'}});
+
+        return terrenos.map((terreno: Terreno) => plainToClass(ReadTerrenoDto, terreno));
+
+    }
+
+    async getTerrenosFromUser(idUsuario: number): Promise<ReadTerrenoDto[]> {
+
+        const usuario: Usuario = await this._usuarioRepository.findOne(idUsuario);
+
+        if (!usuario || usuario === undefined) {
+            throw new NotFoundException('El usuario no existe');
+        }
+
+        const terrenos: Terreno[] = await this._terrenoRepository.find({ where: { usuario: usuario } });
 
         return terrenos.map((terreno: Terreno) => plainToClass(ReadTerrenoDto, terreno));
 
@@ -65,6 +84,7 @@ export class TerrenosService {
         createdTerreno.costoM2 = terreno.costoM2;
         createdTerreno.formaPagoEnganche = terreno.formaPagoEnganche;
         createdTerreno.pagoAlContado = terreno.pagoAlContado;
+        createdTerreno.enganche = terreno.enganche;
         createdTerreno.costoTotal = terreno.costoTotal;
         createdTerreno.saldo = terreno.saldo;
         createdTerreno.fechaVenta = terreno.fechaVenta;
@@ -73,6 +93,8 @@ export class TerrenosService {
         createdTerreno.diaPagoDel = terreno.diaPagoDel;
         createdTerreno.diaPagoAl = terreno.diaPagoAl;
         createdTerreno.pagoDeslinde = terreno.pagoDeslinde;
+        createdTerreno.fechaPagoDeslinde = terreno.fechaPagoDeslinde;
+        createdTerreno.montoDeslinde = terreno.montoDeslinde;
         createdTerreno.fechaPrimeraMensualidad = terreno.fechaPrimeraMensualidad;
         createdTerreno.comentariosAdicionales = terreno.comentariosAdicionales;
         createdTerreno.estatus = terreno.estatus;
@@ -101,6 +123,72 @@ export class TerrenosService {
         await createdTerreno.save();
 
         return plainToClass(ReadTerrenoDto, createdTerreno);
+
+    }
+
+    async updateTerreno(idTerreno: number, terreno: UpdateTerrenoDto): Promise<ReadTerrenoDto> {
+
+        const foundTerreno: Terreno = await this._terrenoRepository.findOne(idTerreno);
+
+        if (!foundTerreno || foundTerreno === undefined) {
+            throw new NotFoundException('El terreno no existe');
+        }
+
+        foundTerreno.noManzana = terreno.noManzana;
+        foundTerreno.noLote = terreno.noLote;
+        foundTerreno.superficie = terreno.superficie;
+        foundTerreno.costoM2 = terreno.costoM2;
+        foundTerreno.enganche = terreno.enganche;
+        foundTerreno.formaPagoEnganche = terreno.formaPagoEnganche;
+        foundTerreno.pagoAlContado = terreno.pagoAlContado;
+        foundTerreno.costoTotal = terreno.costoTotal;
+        foundTerreno.saldo = terreno.saldo;
+        foundTerreno.fechaVenta = terreno.fechaVenta;
+        foundTerreno.noMensualidades = terreno.noMensualidades;
+        foundTerreno.montoMensualidad = terreno.montoMensualidad;
+        foundTerreno.diaPagoDel = terreno.diaPagoDel
+        foundTerreno.diaPagoAl = terreno.diaPagoAl;
+        foundTerreno.pagoDeslinde = terreno.pagoDeslinde;
+        foundTerreno.fechaPagoDeslinde = terreno.fechaPagoDeslinde;
+        foundTerreno.montoDeslinde = terreno.montoDeslinde;
+        foundTerreno.fechaPrimeraMensualidad = terreno.fechaPrimeraMensualidad;
+        foundTerreno.comentariosAdicionales = terreno.comentariosAdicionales;
+
+        const foundFraccionamiento: Fraccionamiento = await this._fraccionamientoRepository.findOne(terreno.fraccionamientoIdFraccionamiento);
+
+        if (!foundFraccionamiento || foundFraccionamiento === undefined) {
+            throw new NotFoundException('El fraccionamiento no existe');
+        }
+            
+        foundTerreno.fraccionamiento = foundFraccionamiento;
+
+        const foundUsuario: Usuario = await this._usuarioRepository.findOne(terreno.usuarioIdUsuario);
+
+        if (!foundUsuario || foundUsuario === undefined) {
+            throw new NotFoundException('El usuario no existe');
+        }
+
+        foundTerreno.usuario = foundUsuario;
+        foundTerreno.vendedores = terreno.vendedores;
+
+        await this._terrenoRepository.save(foundTerreno);
+
+        return plainToClass(ReadTerrenoDto, foundTerreno);
+
+    }
+
+    async deleteTerreno(idTerreno: number): Promise<any> {
+
+        const terrenoExists = await this._terrenoRepository.findOne(idTerreno);
+
+        if (!terrenoExists || terrenoExists === undefined) {
+            throw new NotFoundException('El terreno no existe');
+        }
+
+        terrenoExists.estatus = Estatus.CANCELADO;
+        terrenoExists.save();
+
+        return { deleted: true };
 
     }
 

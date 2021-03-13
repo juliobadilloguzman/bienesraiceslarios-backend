@@ -2,21 +2,27 @@ import { IsNotEmpty, IsString, IsEmail, IsOptional, MinLength, MaxLength } from 
 import { Type } from 'class-transformer';
 import { CreateUsuarioDto } from 'src/modules/usuarios/dto/createUsuario.dto';
 
-export class SignUpDto {
+export class UpdateAccountDto {
 
     //Cuenta
-    @IsNotEmpty()
+    @IsOptional()
+    @IsEmail()
+    readonly oldEmail: string;
+
+    @IsOptional()
     @IsEmail()
     readonly email: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @MinLength(6)
     @IsString()
     readonly password: string;
 
     //Usuario
+    @IsOptional()
+    readonly idUsuario: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     readonly nombre: string;
 
@@ -50,7 +56,7 @@ export class SignUpDto {
     @IsOptional()
     readonly telefonoCelular: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     readonly idRol: number;
 
 }

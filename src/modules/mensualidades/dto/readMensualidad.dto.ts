@@ -19,8 +19,12 @@ export class ReadMensualidadDto {
     readonly numeroMensualidad: number;
 
     @Expose()
+    @IsString()
+    readonly numeroRecibo: string;
+
+    @Expose()
     @IsDate()
-    readonly fechaPago: Date;
+    readonly fechaPago: string;
 
     @Expose()
     @IsNumber()
@@ -40,7 +44,19 @@ export class ReadMensualidadDto {
 
     @Expose()
     @IsString()
+    readonly estatusPago: string;
+
+    @Expose()
+    @IsString()
     readonly estatus: string;
+
+    @Expose()
+    @IsNumber()
+    readonly interes: string;
+
+    @Expose()
+    @IsString()
+    readonly estatusInteres: string;
 
     @Expose()
     @Type(type => ReadUsuarioCuentaDto)

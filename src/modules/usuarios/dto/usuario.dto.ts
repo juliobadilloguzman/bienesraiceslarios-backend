@@ -16,6 +16,10 @@ export class UsuarioDto {
 
     colonia: string;
 
+    numeroExterior: string;
+
+    numeroInterior: string;
+
     municipio: string;
 
     codigoPostal: string;
@@ -25,5 +29,7 @@ export class UsuarioDto {
     telefonoCelular: string;
 
     correo: string;
+
+    estatus: string;
 
 }

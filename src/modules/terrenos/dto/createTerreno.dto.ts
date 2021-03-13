@@ -54,6 +54,12 @@ export class CreateTerrenoDto {
     @IsNumber()
     readonly pagoDeslinde: number;
 
+    @IsNumber()
+    readonly fechaPagoDeslinde: string;
+
+    @IsNumber()
+    readonly montoDeslinde: number;
+
     @IsDate()
     readonly fechaPrimeraMensualidad: Date;
 

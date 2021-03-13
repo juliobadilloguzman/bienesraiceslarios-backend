@@ -22,6 +22,12 @@ export class CreateUsuarioDto {
     readonly colonia: string;
 
     @IsString()
+    readonly numeroExterior: string;
+
+    @IsString()
+    readonly numeroInterior: string;
+
+    @IsString()
     readonly municipio: string;
 
     @IsString()

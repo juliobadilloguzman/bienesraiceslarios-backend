@@ -1,9 +1,10 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { ReadVendedorDto, CreateVendedorDto } from './dto';
+import { ReadVendedorDto, CreateVendedorDto, UpdateVendedorDto } from './dto';
 import { Vendedor } from './vendedor.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VendedorRepository } from './vendedor.repository';
 import { plainToClass } from 'class-transformer';
+import { Estatus } from '../../shared/estatus.enum';
 
 @Injectable()
 export class VendedorService {
@@ -31,11 +32,13 @@ export class VendedorService {
 
     async getVendedores(): Promise<ReadVendedorDto[]> {
 
-        const vendedores: Vendedor[] = await this._vendedorRepository.find();
+        const vendedores: Vendedor[] = await this._vendedorRepository.find({ where: { estatus: Estatus.ACTIVO } });
 
         return vendedores.map((vendedor: Vendedor) => plainToClass(ReadVendedorDto, vendedor));
 
     }
+
+
 
     async createVendedor(vendedor: Partial<CreateVendedorDto>): Promise<ReadVendedorDto> {
 
@@ -45,6 +48,27 @@ export class VendedorService {
 
     }
 
+    async updateVendedor(idVendedor: number, vendedor: Partial<UpdateVendedorDto>): Promise<ReadVendedorDto> {
+
+        const foundVendedor: Vendedor = await this._vendedorRepository.findOne(idVendedor);
+
+        if (!foundVendedor || foundVendedor === undefined) {
+            throw new NotFoundException('El vendedor no existe');
+        }
+
+        foundVendedor.nombre = vendedor.nombre;
+        foundVendedor.apellidoPaterno = vendedor.apellidoPaterno;
+        foundVendedor.apellidoMaterno = vendedor.apellidoMaterno;
+        foundVendedor.telefono = vendedor.telefono;
+        foundVendedor.correo = vendedor.correo;
+
+        const updatedVendedor = await this._vendedorRepository.save(foundVendedor);
+
+        return plainToClass(ReadVendedorDto, updatedVendedor);
+
+    }
+
+
     async deleteVendedor(idUsuario: number): Promise<any> {
 
         const vendedorExists = await this._vendedorRepository.findOne(idUsuario);
@@ -53,7 +77,8 @@ export class VendedorService {
             throw new NotFoundException('El usuario no existe');
         }
 
-        this._vendedorRepository.remove(vendedorExists);
+        vendedorExists.estatus = Estatus.ELIMINADO;
+        vendedorExists.save();
 
         return { deleted: true };
 

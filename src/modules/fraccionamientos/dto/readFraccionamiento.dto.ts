@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
@@ -13,6 +13,22 @@ export class ReadFraccionamientoDto {
     readonly nombre: string;
 
     @Expose()
-    readonly estatus: string;
+    @IsNotEmpty()
+    readonly regimen: string;
+
+    @Expose()
+    @IsOptional()
+    readonly municipio: string;
+
+    @Expose()
+    @IsOptional()
+    readonly estado: string;
+
+    @Expose()
+    @IsOptional()
+    readonly ubicacionMaps: string;
+
+    @Expose()
+    readonly estatusFraccionamiento: string;
 
 }

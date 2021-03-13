@@ -4,6 +4,8 @@ import { ReadFraccionamientoDto } from "src/modules/fraccionamientos/dto";
 import { ReadUsuarioCuentaDto } from "src/modules/cuentas/dto";
 import { Vendedor } from "src/modules/vendedores/vendedor.entity";
 import { ReadVendedorDto } from "src/modules/vendedores/dto";
+import { Mensualidad } from "src/modules/mensualidades/mensualidad.entity";
+import { ReadMensualidadDto } from "src/modules/mensualidades/dto";
 
 @Exclude()
 export class ReadTerrenoDto {
@@ -73,12 +75,24 @@ export class ReadTerrenoDto {
     readonly pagoDeslinde: number;
 
     @Expose()
+    @IsString()
+    readonly fechaPagoDeslinde: string;
+
+    @Expose()
+    @IsNumber()
+    readonly montoDeslinde: number;
+
+    @Expose()
     @IsDate()
     readonly fechaPrimeraMensualidad: Date;
 
     @Expose()
     @IsString()
     readonly comentariosAdicionales: string;
+
+    @Expose()
+    @IsString()
+    readonly estatusTerreno: string;
 
     @Expose()
     @IsString()
@@ -95,5 +109,9 @@ export class ReadTerrenoDto {
     @Expose()
     @Type(type => ReadVendedorDto)
     readonly vendedores: Vendedor[];
+
+    @Expose()
+    @Type(type => ReadMensualidadDto)
+    readonly mensualidades: Mensualidad[];
 
 }

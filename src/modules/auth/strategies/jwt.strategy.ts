@@ -22,6 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     async validate(payload: IJwtPayload) {
 
         const { email } = payload;
+
         const correo = await this._authRepository.findOne({
             where: { email, estatus: 'ACTIVO' }
         });

@@ -1,6 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe, Body, Post } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Body, Post, Patch, Delete } from '@nestjs/common';
 import { TerrenosService } from './terrenos.service';
-import { ReadTerrenoDto, CreateTerrenoDto } from './dto';
+import { ReadTerrenoDto, CreateTerrenoDto, UpdateTerrenoDto } from './dto';
 
 @Controller('terrenos')
 export class TerrenosController {
@@ -17,19 +17,24 @@ export class TerrenosController {
         return this._terrenoService.getTerrenos();
     }
 
+    @Get('usuario/:idUsuario')
+    getTerrenosFromUser(@Param('idUsuario', ParseIntPipe) idUsuario: number): Promise<ReadTerrenoDto[]> {
+        return this._terrenoService.getTerrenosFromUser(idUsuario);
+    }
+
     @Post()
     createTerreno(@Body() terreno: CreateTerrenoDto): Promise<ReadTerrenoDto> {
         return this._terrenoService.createTerreno(terreno);
     }
 
-    // @Patch(':idUsuario')
-    // updateRol(@Param('idUsuario', ParseIntPipe) idUsuario: number, @Body() usuario: Partial<UpdateUsuarioDto>): Promise<ReadUsuarioDto> {
-    //     return this._usuarioService.updateUsuario(idUsuario, usuario);
-    // }
+    @Patch(':idTerreno')
+    updateRol(@Param('idTerreno', ParseIntPipe) idTerreno: number, @Body() terreno: UpdateTerrenoDto): Promise<ReadTerrenoDto> {
+        return this._terrenoService.updateTerreno(idTerreno, terreno);
+    }
 
-    // @Delete(':idUsuario')
-    // deleteRol(@Param('idUsuario', ParseIntPipe) idUsuario: number): Promise<any> {
-    //     return this._usuarioService.deleteUsuario(idUsuario);
-    // }
+    @Delete(':idTerreno')
+    deleteRol(@Param('idTerreno', ParseIntPipe) idTerreno: number): Promise<any> {
+        return this._terrenoService.deleteTerreno(idTerreno);
+    }
 
 }

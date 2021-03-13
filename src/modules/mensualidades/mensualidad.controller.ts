@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Post, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, ParseIntPipe, Patch } from '@nestjs/common';
 import { MensualidadService } from './mensualidad.service';
 import { CreateMensualidadDto } from './dto/createMensualidad.dto';
-import { ReadMensualidadDto } from './dto';
+import { ReadMensualidadDto, UpdateMensualidadDto } from './dto';
 
 @Controller('mensualidades')
 export class MensualidadController {
@@ -18,9 +18,19 @@ export class MensualidadController {
         return this._mensualidadService.getMensualidades();
     }
 
+    @Get('terreno/:idTerreno')
+    getMensualidadesFromTerreno(@Param('idTerreno', ParseIntPipe) idTerreno: number): Promise<ReadMensualidadDto[]> {
+        return this._mensualidadService.getMensualidadesFromTerreno(idTerreno);
+    }
+
     @Post()
     createMensualidad(@Body() mensualidad: CreateMensualidadDto): Promise<ReadMensualidadDto> {
         return this._mensualidadService.createMensualidad(mensualidad);
+    }
+
+    @Patch(':idMensualidad')
+    updateMensualidad(@Param('idMensualidad', ParseIntPipe) idMensualidad: number, @Body() mensualidad: UpdateMensualidadDto): Promise<ReadMensualidadDto> {
+        return this._mensualidadService.updateMensualidad(idMensualidad, mensualidad);
     }
 
 }

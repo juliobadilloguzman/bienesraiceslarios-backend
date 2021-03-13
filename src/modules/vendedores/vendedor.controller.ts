@@ -1,6 +1,7 @@
-import { Controller, Param, ParseIntPipe, Get, Post, Body } from '@nestjs/common';
-import { ReadVendedorDto, CreateVendedorDto } from './dto';
+import { Controller, Param, ParseIntPipe, Get, Post, Body, Delete, Patch } from '@nestjs/common';
+import { ReadVendedorDto, CreateVendedorDto, UpdateVendedorDto } from './dto';
 import { VendedorService } from './vendedor.service';
+import { UpdateCuentaDto } from '../cuentas/dto';
 
 @Controller('vendedores')
 export class VendedorController {
@@ -20,6 +21,16 @@ export class VendedorController {
     @Post()
     createVendedor(@Body() vendedor: Partial<CreateVendedorDto>): Promise<ReadVendedorDto> {
         return this._vendedorService.createVendedor(vendedor);
+    }
+
+    @Patch(':idVendedor')
+    updateVendedor(@Param('idVendedor', ParseIntPipe) idVendedor: number, @Body() vendedor: Partial<UpdateVendedorDto>): Promise<ReadVendedorDto> {
+        return this._vendedorService.updateVendedor(idVendedor, vendedor);
+    }
+
+    @Delete(':idVendedor')
+    deleteUsuario(@Param('idVendedor', ParseIntPipe) idVendedor: number): Promise<any> {
+        return this._vendedorService.deleteVendedor(idVendedor);
     }
 
 }
