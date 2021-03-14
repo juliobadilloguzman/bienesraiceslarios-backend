@@ -26,7 +26,7 @@ export class ConfigService {
 
             this.envConfig = parse(fs.readFileSync(envFilePath));
         } else {
-            console.log('prod');
+            console.log('prod in port: ' + process.env.PORT);
             this.envConfig = {
                 PORT: process.env.PORT,
             };
