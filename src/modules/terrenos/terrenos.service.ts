@@ -192,4 +192,18 @@ export class TerrenosService {
 
     }
 
+    async isDuplicated(noManzana, noLote, idFraccionamiento): Promise<any>{
+
+        const foundFraccionamiento = await this._fraccionamientoRepository.find({where: {idFraccionamiento: idFraccionamiento}});
+
+        const terreno = await this._terrenoRepository.find({where: {noManzana: noManzana, noLote: noLote, fraccionamiento: foundFraccionamiento}});
+
+        if(terreno){
+            return true;
+        }
+
+        return false;
+
+    }
+
 }
