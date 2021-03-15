@@ -6,6 +6,7 @@ import { Vendedor } from "src/modules/vendedores/vendedor.entity";
 import { ReadVendedorDto } from "src/modules/vendedores/dto";
 import { Mensualidad } from "src/modules/mensualidades/mensualidad.entity";
 import { ReadMensualidadDto } from "src/modules/mensualidades/dto";
+import { Usuario } from "src/modules/usuarios/usuario.entity";
 
 @Exclude()
 export class ReadTerrenoDto {
@@ -104,7 +105,7 @@ export class ReadTerrenoDto {
 
     @Expose()
     @Type(type => ReadUsuarioCuentaDto)
-    readonly usuario: ReadUsuarioCuentaDto;
+    readonly clientes: Usuario[];
 
     @Expose()
     @Type(type => ReadVendedorDto)

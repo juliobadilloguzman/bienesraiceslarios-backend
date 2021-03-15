@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
+import { BaseEntity, Entity, PrimaryColumn, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, ManyToMany, JoinColumn } from 'typeorm';
 import { Terreno } from '../terrenos/terreno.entity';
 import { Mensualidad } from '../mensualidades/mensualidad.entity';
 import { Estatus } from '../../shared/estatus.enum';
@@ -45,7 +45,8 @@ export class Usuario extends BaseEntity {
     @Column({ type: 'varchar', length: 80, nullable: true })
     correo: string;
 
-    @OneToMany(() => Terreno, terreno => terreno.usuario)
+    @ManyToMany(type => Terreno, terreno => terreno.clientes)
+    @JoinColumn()
     terrenos: Terreno[];
 
     @OneToMany(() => Mensualidad, mensualidad => mensualidad.usuario)
