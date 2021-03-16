@@ -77,9 +77,8 @@ export class Terreno extends BaseEntity {
     @ManyToOne(() => Fraccionamiento, fraccionamiento => fraccionamiento.terrenos, { eager: true })
     fraccionamiento: Fraccionamiento;
 
-    @ManyToMany(type => Usuario, usuario => usuario.terrenos, { eager: true })
-    @JoinTable({ name: 'terrenos_has_clientes' })
-    clientes: Usuario[];
+    @ManyToOne(() => Usuario, usuario => usuario.terrenos, { eager: true })
+    usuario: Usuario;
 
     @ManyToMany(type => Vendedor, vendedor => vendedor.terrenos, { eager: true })
     @JoinTable({ name: 'terrenos_has_vendedores' })

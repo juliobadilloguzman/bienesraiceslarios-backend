@@ -46,7 +46,7 @@ export class TerrenosService {
 
     async getTerrenos(): Promise<ReadTerrenoDto[]> {
 
-        const terrenos: Terreno[] = await this._terrenoRepository.find({where: {estatus: 'ACTIVO'}});
+        const terrenos: Terreno[] = await this._terrenoRepository.find({where: {estatus: Estatus.ACTIVO}});
 
         return terrenos.map((terreno: Terreno) => plainToClass(ReadTerrenoDto, terreno));
 
@@ -54,7 +54,7 @@ export class TerrenosService {
 
     async getTerrenosFromUser(idUsuario: number): Promise<ReadTerrenoDto[]> {
 
-        const usuario: Usuario = await this._usuarioRepository.findOne(idUsuario);
+        const usuario: Usuario = await this._usuarioRepository.findOne({where: {idUsuario: idUsuario, estatus: Estatus.ACTIVO}});
 
         if (!usuario || usuario === undefined) {
             throw new NotFoundException('El usuario no existe');
@@ -192,11 +192,11 @@ export class TerrenosService {
 
     }
 
-    async isDuplicated(noManzana, noLote, idFraccionamiento): Promise<any>{
+    async isDuplicated(information): Promise<any>{
 
-        const foundFraccionamiento = await this._fraccionamientoRepository.find({where: {idFraccionamiento: idFraccionamiento}});
+        const foundFraccionamiento = await this._fraccionamientoRepository.findOne({where: {idFraccionamiento: information.idFraccionamiento}});
 
-        const terreno = await this._terrenoRepository.find({where: {noManzana: noManzana, noLote: noLote, fraccionamiento: foundFraccionamiento}});
+        const terreno = await this._terrenoRepository.findOne({where: {noManzana: information.noManzana, noLote: information.noLote, fraccionamiento: foundFraccionamiento, estatus: Estatus.ACTIVO}});
 
         if(terreno){
             return true;

@@ -1,6 +1,5 @@
 import { IsString, IsNumber, IsNotEmpty, IsDate } from "class-validator";
 import { Vendedor } from "src/modules/vendedores/vendedor.entity";
-import { Usuario } from "src/modules/usuarios/usuario.entity";
 
 export class CreateTerrenoDto {
 
@@ -76,7 +75,7 @@ export class CreateTerrenoDto {
 
     @IsNotEmpty()
     @IsNumber()
-    readonly clientes: Usuario[];
+    readonly usuarioIdUsuario: number;
 
     readonly vendedores: Vendedor[];
 

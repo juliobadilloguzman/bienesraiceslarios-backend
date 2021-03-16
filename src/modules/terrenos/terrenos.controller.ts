@@ -17,6 +17,11 @@ export class TerrenosController {
         return this._terrenoService.getTerrenos();
     }
 
+    @Post('isDuplicated')
+    isDuplicated(@Body() information: any): Promise<any[]> {
+        return this._terrenoService.isDuplicated(information);
+    }
+
     @Get('usuario/:idUsuario')
     getTerrenosFromUser(@Param('idUsuario', ParseIntPipe) idUsuario: number): Promise<ReadTerrenoDto[]> {
         return this._terrenoService.getTerrenosFromUser(idUsuario);
