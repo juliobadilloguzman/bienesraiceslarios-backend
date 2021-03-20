@@ -66,6 +66,7 @@ export class FraccionamientoService {
         foundFraccionamiento.estado = fraccionamiento.estado;
         foundFraccionamiento.municipio = fraccionamiento.municipio;
         foundFraccionamiento.ubicacionMaps = fraccionamiento.ubicacionMaps;
+        foundFraccionamiento.estatusFraccionamiento = fraccionamiento.estatusFraccionamiento;
 
         const updatedFraccionamiento = await this._fraccionamientoRepository.save(foundFraccionamiento);
 

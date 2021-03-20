@@ -37,6 +37,11 @@ export class TerrenosController {
         return this._terrenoService.updateTerreno(idTerreno, terreno);
     }
 
+    @Patch('changeStatus/:idTerreno')
+    changeStatus(@Param('idTerreno', ParseIntPipe) idTerreno: number, @Body() estatus: any): Promise<any> {
+        return this._terrenoService.changeStatus(idTerreno, estatus);
+    }
+
     @Delete(':idTerreno')
     deleteRol(@Param('idTerreno', ParseIntPipe) idTerreno: number): Promise<any> {
         return this._terrenoService.deleteTerreno(idTerreno);

@@ -31,7 +31,7 @@ export class MensualidadService {
             throw new BadRequestException('idMensualidad no puede ser nulo');
         }
 
-        const mensualidad: Mensualidad = await this._mensualidadRepository.findOne(idMensualidad);
+        const mensualidad: Mensualidad = await this._mensualidadRepository.findOne({where : {idMensualidad: idMensualidad, estatus: Estatus.ACTIVO}});
 
         if (!mensualidad || mensualidad === undefined) {
             throw new NotFoundException('La mensualidad no existe');
@@ -43,7 +43,7 @@ export class MensualidadService {
 
     async getMensualidades(): Promise<ReadMensualidadDto[]> {
 
-        const mensualidades: Mensualidad[] = await this._mensualidadRepository.find();
+        const mensualidades: Mensualidad[] = await this._mensualidadRepository.find({where: {estatus: Estatus.ACTIVO}});
 
         return mensualidades.map((mensualidad: Mensualidad) => plainToClass(ReadMensualidadDto, mensualidad));
 
@@ -61,7 +61,7 @@ export class MensualidadService {
             throw new NotFoundException('El terreno no existe');
         }
 
-        const mensualidades: Mensualidad[] = await this._mensualidadRepository.find({ where: { terreno: terrenoExists } });
+        const mensualidades: Mensualidad[] = await this._mensualidadRepository.find({ where: { terreno: terrenoExists, estatus: Estatus.ACTIVO } });
 
         return mensualidades.map((mensualidad: Mensualidad) => plainToClass(ReadMensualidadDto, mensualidad));
 
@@ -132,6 +132,8 @@ export class MensualidadService {
             throw new NotFoundException('La mensualidad no existe');
         }
 
+        const tempInteres = foundMensualidad.interes;
+
         foundMensualidad.numeroMensualidad = mensualidad.numeroMensualidad;
         foundMensualidad.numeroRecibo = mensualidad.numeroRecibo;
         foundMensualidad.fechaPago = mensualidad.fechaPago;
@@ -152,7 +154,9 @@ export class MensualidadService {
         //Descontar el interes del precio total del terreno
         if (mensualidad.estatusInteres == 'PAGADO') {
 
-            foundTerreno.saldo = foundTerreno.saldo - foundMensualidad.interes;
+            console.log('voy a descontar el interes', tempInteres);
+
+            foundTerreno.saldo = foundTerreno.saldo - tempInteres;
             foundMensualidad.interes = 0;
 
         }else if(mensualidad.estatusInteres == 'NO PAGADO'){
@@ -162,9 +166,9 @@ export class MensualidadService {
 
         //Si ya la pago, restar el monto de la mensualidad al saldo del terreno
         if (mensualidad.estatusPago == 'PAGADA') {
-
             foundTerreno.saldo = foundTerreno.saldo - mensualidad.monto;
-
+        }else if(mensualidad.estatusPago == 'NO PAGADA'){
+            foundTerreno.saldo = foundTerreno.saldo + foundMensualidad.monto;
         }
 
         await this._terrenoRepository.save(foundTerreno);
@@ -177,7 +181,7 @@ export class MensualidadService {
             const terrenoUpdated: Terreno = await this._terrenoRepository.findOne({ where: { idTerreno: mensualidad.terrenoIdTerreno } });
 
             //Buscar si tiene mas mensualidades sin intereses
-            const mensualidades: Mensualidad[] = await this._mensualidadRepository.find({ where: { terreno: terrenoUpdated } });
+            const mensualidades: Mensualidad[] = await this._mensualidadRepository.find({ where: { terreno: terrenoUpdated, estatus: Estatus.ACTIVO } });
 
             let hasMoreIntereses: boolean = false;
 
@@ -197,6 +201,45 @@ export class MensualidadService {
 
         return plainToClass(ReadMensualidadDto, updatedMensualidad);
 
+
+    }
+
+    async deleteMensualidad(idMensualidad: number): Promise<any> {
+
+        const mensualidadExists = await this._mensualidadRepository.findOne({where: {idMensualidad: idMensualidad, estatus: Estatus.ACTIVO}});
+
+        if (!mensualidadExists || mensualidadExists === undefined) {
+            throw new NotFoundException('La mensualidad no existe');
+        }
+
+        //Descontar el monto y el interes
+        const foundTerreno: Terreno = await this._terrenoRepository.findOne({ where: { idTerreno: mensualidadExists.terreno.idTerreno } });
+        
+        foundTerreno.saldo = foundTerreno.saldo + mensualidadExists.monto + mensualidadExists.interes;
+
+        //Buscar si tiene mas mensualidades sin intereses
+        const mensualidades: Mensualidad[] = await this._mensualidadRepository.find({ where: { terreno: mensualidadExists.terreno, estatus: Estatus.ACTIVO } });
+
+        let hasMoreIntereses: boolean = false;
+
+        for (let mensualidad of mensualidades) {
+            console.log(mensualidad);
+            if (mensualidad.estatusInteres == Estatus.NO_PAGADO) {
+                hasMoreIntereses = true;
+                break;
+            }
+        }
+
+        if (!hasMoreIntereses) {
+            foundTerreno.estatusTerreno = Estatus.AL_CORRIENTE;
+        }
+
+        await this._terrenoRepository.save(foundTerreno);
+
+        mensualidadExists.estatus = Estatus.CANCELADO;
+        mensualidadExists.save();
+
+        return { deleted: true };
 
     }
 

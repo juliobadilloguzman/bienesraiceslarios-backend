@@ -192,7 +192,7 @@ export class TerrenosService {
 
     }
 
-    async isDuplicated(information): Promise<any>{
+    async isDuplicated(information: any): Promise<any>{
 
         const foundFraccionamiento = await this._fraccionamientoRepository.findOne({where: {idFraccionamiento: information.idFraccionamiento}});
 
@@ -203,6 +203,19 @@ export class TerrenosService {
         }
 
         return false;
+
+    }
+
+    async changeStatus(idTerreno: number, data: any): Promise<any>{
+
+        const foundTerreno = await this._terrenoRepository.findOne({where: {idTerreno: idTerreno}});
+
+        foundTerreno.estatusTerreno = data.estatusTerreno;
+
+        await this._terrenoRepository.save(foundTerreno);
+
+        return {updated: true};
+
 
     }
 
