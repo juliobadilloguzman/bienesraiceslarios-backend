@@ -38,6 +38,9 @@ export class ReadMensualidadDto {
     @IsString()
     readonly mes: string;
 
+    @IsString()
+    readonly year: string;
+
     @Expose()
     @IsString()
     readonly formaPago: string;

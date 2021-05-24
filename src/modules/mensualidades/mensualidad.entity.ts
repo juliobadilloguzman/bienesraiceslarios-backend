@@ -30,6 +30,9 @@ export class Mensualidad extends BaseEntity {
     mes: string;
 
     @Column({ type: 'varchar', nullable: true })
+    year: string;
+
+    @Column({ type: 'varchar', nullable: true })
     formaPago: string;
 
     @Column({ type: 'varchar', nullable: false })

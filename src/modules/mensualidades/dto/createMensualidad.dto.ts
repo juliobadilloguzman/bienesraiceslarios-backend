@@ -27,6 +27,9 @@ export class CreateMensualidadDto {
     @IsString()
     readonly mes: string;
 
+    @IsString()
+    readonly year: string;
+
     @IsNotEmpty()
     @IsString()
     readonly formaPago: string;

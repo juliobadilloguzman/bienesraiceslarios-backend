@@ -86,6 +86,7 @@ export class MensualidadService {
         createdMensualidad.estatusPago = mensualidad.estatusPago;
         createdMensualidad.interes = mensualidad.interes;
         createdMensualidad.estatusInteres = mensualidad.estatusInteres;
+        createdMensualidad.year = mensualidad.year;
 
         //Terreno
         const terreno = await this._terrenoRepository.findOne({ where: { idTerreno: mensualidad.terrenoIdTerreno } });
@@ -144,6 +145,7 @@ export class MensualidadService {
         foundMensualidad.estatusPago = mensualidad.estatusPago;
         foundMensualidad.interes = mensualidad.interes;
         foundMensualidad.estatusInteres = mensualidad.estatusInteres;
+        foundMensualidad.year = mensualidad.year;
 
         const foundTerreno: Terreno = await this._terrenoRepository.findOne({ where: { idTerreno: mensualidad.terrenoIdTerreno } });
 
@@ -223,7 +225,6 @@ export class MensualidadService {
         let hasMoreIntereses: boolean = false;
 
         for (let mensualidad of mensualidades) {
-            console.log(mensualidad);
             if (mensualidad.estatusInteres == Estatus.NO_PAGADO) {
                 hasMoreIntereses = true;
                 break;
