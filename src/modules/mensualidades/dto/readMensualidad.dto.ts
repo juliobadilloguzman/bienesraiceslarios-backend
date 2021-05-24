@@ -38,6 +38,7 @@ export class ReadMensualidadDto {
     @IsString()
     readonly mes: string;
 
+    @Expose()
     @IsString()
     readonly year: string;
 
