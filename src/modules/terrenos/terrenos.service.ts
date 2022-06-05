@@ -10,22 +10,21 @@ import { FraccionamientoRepository } from '../fraccionamientos/fraccionamiento.r
 import { VendedorRepository } from '../vendedores/vendedor.repository';
 import { Usuario } from '../usuarios/usuario.entity';
 import { Estatus } from '../../shared/estatus.enum';
-import { Mensualidad } from '../mensualidades/mensualidad.entity';
 import { UpdateTerrenoDto } from './dto/updateTerreno.dto';
 import { Fraccionamiento } from '../fraccionamientos/fraccionamiento.entity';
 
 @Injectable()
 export class TerrenosService {
-
+    
     constructor(
         @InjectRepository(TerrenoRepository)
-        private readonly _terrenoRepository: TerrenoRepository,
+        private readonly terrenoRepository: TerrenoRepository,
         @InjectRepository(UsuarioRepository)
-        private readonly _usuarioRepository: UsuarioRepository,
+        private readonly usuarioRepository: UsuarioRepository,
         @InjectRepository(FraccionamientoRepository)
-        private readonly _fraccionamientoRepository: FraccionamientoRepository,
+        private readonly fraccionamientoRepository: FraccionamientoRepository,
         @InjectRepository(VendedorRepository)
-        private readonly _vendedorRepository: VendedorRepository
+        private readonly vendedorRepository: VendedorRepository
     ) { }
 
     async getTerreno(idTerreno: number): Promise<ReadTerrenoDto> {
@@ -34,7 +33,7 @@ export class TerrenosService {
             throw new BadRequestException('idTerreno no puede ser nulo');
         }
 
-        const terreno: Terreno = await this._terrenoRepository.findOne(idTerreno);
+        const terreno: Terreno = await this.terrenoRepository.findOne(idTerreno);
 
         if (!terreno || terreno === undefined) {
             throw new NotFoundException('El terreno no existe');
@@ -46,7 +45,7 @@ export class TerrenosService {
 
     async getTerrenos(): Promise<ReadTerrenoDto[]> {
 
-        const terrenos: Terreno[] = await this._terrenoRepository.find({where: {estatus: Estatus.ACTIVO}});
+        const terrenos: Terreno[] = await this.terrenoRepository.find({where: {estatus: Estatus.ACTIVO}});
 
         return terrenos.map((terreno: Terreno) => plainToClass(ReadTerrenoDto, terreno));
 
@@ -54,13 +53,13 @@ export class TerrenosService {
 
     async getTerrenosFromUser(idUsuario: number): Promise<ReadTerrenoDto[]> {
 
-        const usuario: Usuario = await this._usuarioRepository.findOne({where: {idUsuario: idUsuario, estatus: Estatus.ACTIVO}});
+        const usuario: Usuario = await this.usuarioRepository.findOne({where: {idUsuario: idUsuario, estatus: Estatus.ACTIVO}});
 
-        if (!usuario || usuario === undefined) {
+        if (usuario == null) {
             throw new NotFoundException('El usuario no existe');
         }
 
-        const terrenos: Terreno[] = await this._terrenoRepository.find({ where: { usuario: usuario } });
+        const terrenos: Terreno[] = await this.terrenoRepository.find({ where: { usuario: usuario } });
 
         return terrenos.map((terreno: Terreno) => plainToClass(ReadTerrenoDto, terreno));
 
@@ -100,7 +99,7 @@ export class TerrenosService {
         createdTerreno.estatus = terreno.estatus;
 
         //Fraccionamiento
-        const fraccionamiento = await this._fraccionamientoRepository.findOne({ where: { idFraccionamiento: terreno.fraccionamientoIdFraccionamiento } });
+        const fraccionamiento = await this.fraccionamientoRepository.findOne({ where: { idFraccionamiento: terreno.fraccionamientoIdFraccionamiento } });
 
         if (!fraccionamiento || fraccionamiento === undefined) {
             throw new NotFoundException('El fraccionamiento no existe');
@@ -109,7 +108,7 @@ export class TerrenosService {
         createdTerreno.fraccionamiento = fraccionamiento;
 
         //Usuario
-        const usuario = await this._usuarioRepository.findOne({ where: { idUsuario: terreno.usuarioIdUsuario } });
+        const usuario = await this.usuarioRepository.findOne({ where: { idUsuario: terreno.usuarioIdUsuario } });
 
         if (!usuario || usuario === undefined) {
             throw new NotFoundException('El usuario no existe');
@@ -128,10 +127,10 @@ export class TerrenosService {
 
     async updateTerreno(idTerreno: number, terreno: UpdateTerrenoDto): Promise<ReadTerrenoDto> {
 
-        const foundTerreno: Terreno = await this._terrenoRepository.findOne(idTerreno);
+        const foundTerreno: Terreno = await this.terrenoRepository.findOne(idTerreno);
 
-        if (!foundTerreno || foundTerreno === undefined) {
-            throw new NotFoundException('El terreno no existe');
+        if (foundTerreno === null) {
+            throw new NotFoundException(`El terreno con id ${idTerreno} no existe.`);
         }
 
         foundTerreno.noManzana = terreno.noManzana;
@@ -154,7 +153,7 @@ export class TerrenosService {
         foundTerreno.fechaPrimeraMensualidad = terreno.fechaPrimeraMensualidad;
         foundTerreno.comentariosAdicionales = terreno.comentariosAdicionales;
 
-        const foundFraccionamiento: Fraccionamiento = await this._fraccionamientoRepository.findOne(terreno.fraccionamientoIdFraccionamiento);
+        const foundFraccionamiento: Fraccionamiento = await this.fraccionamientoRepository.findOne(terreno.fraccionamientoIdFraccionamiento);
 
         if (!foundFraccionamiento || foundFraccionamiento === undefined) {
             throw new NotFoundException('El fraccionamiento no existe');
@@ -162,7 +161,7 @@ export class TerrenosService {
             
         foundTerreno.fraccionamiento = foundFraccionamiento;
 
-        const foundUsuario: Usuario = await this._usuarioRepository.findOne(terreno.usuarioIdUsuario);
+        const foundUsuario: Usuario = await this.usuarioRepository.findOne(terreno.usuarioIdUsuario);
 
         if (!foundUsuario || foundUsuario === undefined) {
             throw new NotFoundException('El usuario no existe');
@@ -171,7 +170,7 @@ export class TerrenosService {
         foundTerreno.usuario = foundUsuario;
         foundTerreno.vendedores = terreno.vendedores;
 
-        await this._terrenoRepository.save(foundTerreno);
+        await this.terrenoRepository.save(foundTerreno);
 
         return plainToClass(ReadTerrenoDto, foundTerreno);
 
@@ -179,7 +178,7 @@ export class TerrenosService {
 
     async deleteTerreno(idTerreno: number): Promise<any> {
 
-        const terrenoExists = await this._terrenoRepository.findOne(idTerreno);
+        const terrenoExists = await this.terrenoRepository.findOne(idTerreno);
 
         if (!terrenoExists || terrenoExists === undefined) {
             throw new NotFoundException('El terreno no existe');
@@ -194,9 +193,9 @@ export class TerrenosService {
 
     async isDuplicated(information: any): Promise<any>{
 
-        const foundFraccionamiento = await this._fraccionamientoRepository.findOne({where: {idFraccionamiento: information.idFraccionamiento}});
+        const foundFraccionamiento = await this.fraccionamientoRepository.findOne({where: {idFraccionamiento: information.idFraccionamiento}});
 
-        const terreno = await this._terrenoRepository.findOne({where: {noManzana: information.noManzana, noLote: information.noLote, fraccionamiento: foundFraccionamiento, estatus: Estatus.ACTIVO}});
+        const terreno = await this.terrenoRepository.findOne({where: {noManzana: information.noManzana, noLote: information.noLote, fraccionamiento: foundFraccionamiento, estatus: Estatus.ACTIVO}});
 
         if(terreno){
             return true;
@@ -208,11 +207,11 @@ export class TerrenosService {
 
     async changeStatus(idTerreno: number, data: any): Promise<any>{
 
-        const foundTerreno = await this._terrenoRepository.findOne({where: {idTerreno: idTerreno}});
+        const foundTerreno = await this.terrenoRepository.findOne({where: {idTerreno: idTerreno}});
 
         foundTerreno.estatusTerreno = data.estatusTerreno;
 
-        await this._terrenoRepository.save(foundTerreno);
+        await this.terrenoRepository.save(foundTerreno);
 
         return {updated: true};
 

@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { parse } from 'dotenv';
 
 export class ConfigService {
+
     private readonly envConfig: { [key: string]: string };
 
     constructor() {
@@ -10,23 +11,22 @@ export class ConfigService {
 
         if (isDevelopmentEnv) {
 
-            // console.log('is dev');
-
             const envFilePath = __dirname + '/../../../.env';
             const existsPath = fs.existsSync(envFilePath);
-
-            // console.log(envFilePath);
-            // console.log(existsPath);
-            // console.log(fs.existsSync('/Users/julioguzman/Desktop/bienesraiceslarios-backend/.env'))
 
             if (!existsPath) {
                 console.log('.env file does not exist');
                 process.exit(0);
             }
 
+            console.log('dev in port: ' + process.env.PORT);
+
             this.envConfig = parse(fs.readFileSync(envFilePath));
+
         } else {
+
             console.log('prod in port: ' + process.env.PORT);
+            
             this.envConfig = {
                 PORT: process.env.PORT,
             };
