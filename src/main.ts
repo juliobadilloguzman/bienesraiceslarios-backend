@@ -4,7 +4,14 @@ const fs = require('fs');
 
 async function bootstrap() {
 
-  const app = await NestFactory.create(AppModule, {cors: true});
+  const keyFile  = fs.readFileSync(__dirname + '/../../server.key');
+  const certFile = fs.readFileSync(__dirname + '/../../cert_chain.crt');
+
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions: {
+      key: keyFile,
+      cert: certFile,
+    }});
 
   app.setGlobalPrefix('api');
   app.enableCors();
