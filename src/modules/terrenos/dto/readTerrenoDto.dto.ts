@@ -11,6 +11,10 @@ import { ReadMensualidadDto } from "src/modules/mensualidades/dto";
 export class ReadTerrenoDto {
 
     @Expose()
+    @IsString()
+    readonly uuid: string;
+
+    @Expose()
     @IsNumber()
     readonly idTerreno: number;
 

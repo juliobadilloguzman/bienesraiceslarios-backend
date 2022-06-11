@@ -41,7 +41,8 @@
         "rimraf": "^3.0.2",
         "rxjs": "^6.6.3",
         "ts-mapper": "^1.2.4",
-        "typeorm": "^0.2.29"
+        "typeorm": "^0.2.29",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@nestjs/cli": "^7.5.1",
@@ -55,6 +56,7 @@
         "@types/passport": "^1.0.5",
         "@types/passport-jwt": "^3.0.3",
         "@types/supertest": "^2.0.10",
+        "@types/uuid": "^8.3.4",
         "@typescript-eslint/eslint-plugin": "^4.6.1",
         "@typescript-eslint/parser": "^4.6.1",
         "dotenv": "^8.2.0",

@@ -8,6 +8,9 @@ import { Mensualidad } from "../mensualidades/mensualidad.entity";
 @Entity('terrenos')
 export class Terreno extends BaseEntity {
 
+    @Column({ primary: false, generated: 'uuid' })
+    uuid: string;
+
     @PrimaryGeneratedColumn('increment')
     idTerreno: number;
 
