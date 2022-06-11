@@ -16,47 +16,75 @@ import { Fraccionamiento } from '../fraccionamientos/fraccionamiento.entity';
 @Injectable()
 export class TerrenosService {
     
-    constructor(
-        @InjectRepository(TerrenoRepository)
-        private readonly terrenoRepository: TerrenoRepository,
-        @InjectRepository(UsuarioRepository)
-        private readonly usuarioRepository: UsuarioRepository,
-        @InjectRepository(FraccionamientoRepository)
-        private readonly fraccionamientoRepository: FraccionamientoRepository,
-        @InjectRepository(VendedorRepository)
-        private readonly vendedorRepository: VendedorRepository
+    /**
+     * Creates an instance of TerrenosService.
+     * 
+     * @param {TerrenoRepository} terrenoRepository
+     * @param {UsuarioRepository} usuarioRepository
+     * @param {FraccionamientoRepository} fraccionamientoRepository
+     * @param {VendedorRepository} vendedorRepository
+     * @memberof TerrenosService
+     */
+    constructor(@InjectRepository(TerrenoRepository)
+                private readonly terrenoRepository: TerrenoRepository,
+                @InjectRepository(UsuarioRepository)
+                private readonly usuarioRepository: UsuarioRepository,
+                @InjectRepository(FraccionamientoRepository)
+                private readonly fraccionamientoRepository: FraccionamientoRepository,
+                @InjectRepository(VendedorRepository)
+                private readonly vendedorRepository: VendedorRepository
     ) { }
 
-    async getTerreno(idTerreno: number): Promise<ReadTerrenoDto> {
+    /**
+     * Gets a Terreno by its uuid.
+     *
+     * @param {string} uuidTerreno
+     * @return {*}  {Promise<ReadTerrenoDto>}
+     * @memberof TerrenosService
+     */
+    async getTerreno(uuidTerreno: string): Promise<ReadTerrenoDto> {
 
-        if (!idTerreno || idTerreno === undefined) {
-            throw new BadRequestException('idTerreno no puede ser nulo');
+        if (uuidTerreno == null) {
+            throw new BadRequestException('uuidTerreno no puede ser nulo');
         }
 
-        const terreno: Terreno = await this.terrenoRepository.findOne(idTerreno);
+        const terreno: Terreno = await this.terrenoRepository.findOne({ where: { uuid: uuidTerreno } });
 
-        if (!terreno || terreno === undefined) {
-            throw new NotFoundException('El terreno no existe');
+        if (terreno == null) {
+            throw new NotFoundException(`El terreno con uuid ${uuidTerreno} no existe`);
         }
 
         return plainToClass(ReadTerrenoDto, terreno);
 
     }
 
+    /**
+     * Get all the Terrenos with Active Status.
+     *
+     * @return {*}  {Promise<ReadTerrenoDto[]>}
+     * @memberof TerrenosService
+     */
     async getTerrenos(): Promise<ReadTerrenoDto[]> {
 
-        const terrenos: Terreno[] = await this.terrenoRepository.find({where: {estatus: Estatus.ACTIVO}});
+        const terrenos: Terreno[] = await this.terrenoRepository.find({ where: { estatus: Estatus.ACTIVO } });
 
         return terrenos.map((terreno: Terreno) => plainToClass(ReadTerrenoDto, terreno));
 
     }
 
+    /**
+     * Gets all the Terrenos from a User.
+     *
+     * @param {number} idUsuario
+     * @return {*}  {Promise<ReadTerrenoDto[]>}
+     * @memberof TerrenosService
+     */
     async getTerrenosFromUser(idUsuario: number): Promise<ReadTerrenoDto[]> {
 
         const usuario: Usuario = await this.usuarioRepository.findOne({where: {idUsuario: idUsuario, estatus: Estatus.ACTIVO}});
 
         if (usuario == null) {
-            throw new NotFoundException('El usuario no existe');
+            throw new NotFoundException(`El usuario con id ${idUsuario} no existe`);
         }
 
         const terrenos: Terreno[] = await this.terrenoRepository.find({ where: { usuario: usuario } });
@@ -65,6 +93,13 @@ export class TerrenosService {
 
     }
 
+    /**
+     * Creates a Terreno.
+     *
+     * @param {CreateTerrenoDto} terreno
+     * @return {*}  {Promise<ReadTerrenoDto>}
+     * @memberof TerrenosService
+     */
     async createTerreno(terreno: CreateTerrenoDto): Promise<ReadTerrenoDto> {
 
         if (!terreno.fraccionamientoIdFraccionamiento || terreno.fraccionamientoIdFraccionamiento === undefined) {
@@ -99,7 +134,7 @@ export class TerrenosService {
         createdTerreno.estatus = terreno.estatus;
 
         //Fraccionamiento
-        const fraccionamiento = await this.fraccionamientoRepository.findOne({ where: { idFraccionamiento: terreno.fraccionamientoIdFraccionamiento } });
+        const fraccionamiento: Fraccionamiento = await this.fraccionamientoRepository.findOne({ where: { idFraccionamiento: terreno.fraccionamientoIdFraccionamiento } });
 
         if (!fraccionamiento || fraccionamiento === undefined) {
             throw new NotFoundException('El fraccionamiento no existe');
@@ -108,7 +143,7 @@ export class TerrenosService {
         createdTerreno.fraccionamiento = fraccionamiento;
 
         //Usuario
-        const usuario = await this.usuarioRepository.findOne({ where: { idUsuario: terreno.usuarioIdUsuario } });
+        const usuario: Usuario = await this.usuarioRepository.findOne({ where: { idUsuario: terreno.usuarioIdUsuario } });
 
         if (!usuario || usuario === undefined) {
             throw new NotFoundException('El usuario no existe');
@@ -125,11 +160,19 @@ export class TerrenosService {
 
     }
 
+    /**
+     * Updates a Terreno.
+     *
+     * @param {number} idTerreno
+     * @param {UpdateTerrenoDto} terreno
+     * @return {*}  {Promise<ReadTerrenoDto>}
+     * @memberof TerrenosService
+     */
     async updateTerreno(idTerreno: number, terreno: UpdateTerrenoDto): Promise<ReadTerrenoDto> {
 
         const foundTerreno: Terreno = await this.terrenoRepository.findOne(idTerreno);
 
-        if (foundTerreno === null) {
+        if (foundTerreno == null) {
             throw new NotFoundException(`El terreno con id ${idTerreno} no existe.`);
         }
 
@@ -155,7 +198,7 @@ export class TerrenosService {
 
         const foundFraccionamiento: Fraccionamiento = await this.fraccionamientoRepository.findOne(terreno.fraccionamientoIdFraccionamiento);
 
-        if (!foundFraccionamiento || foundFraccionamiento === undefined) {
+        if (foundFraccionamiento == null) {
             throw new NotFoundException('El fraccionamiento no existe');
         }
             
@@ -163,7 +206,7 @@ export class TerrenosService {
 
         const foundUsuario: Usuario = await this.usuarioRepository.findOne(terreno.usuarioIdUsuario);
 
-        if (!foundUsuario || foundUsuario === undefined) {
+        if (foundUsuario == null) {
             throw new NotFoundException('El usuario no existe');
         }
 
@@ -176,6 +219,13 @@ export class TerrenosService {
 
     }
 
+    /**
+     * Deletes a Terreno.
+     *
+     * @param {number} idTerreno
+     * @return {*}  {Promise<any>}
+     * @memberof TerrenosService
+     */
     async deleteTerreno(idTerreno: number): Promise<any> {
 
         const terrenoExists = await this.terrenoRepository.findOne(idTerreno);
@@ -191,17 +241,24 @@ export class TerrenosService {
 
     }
 
+    /**
+     * Verify is a Terreno is duplicated.
+     *
+     * @param {*} information
+     * @return {*}  {Promise<any>}
+     * @memberof TerrenosService
+     */
     async isDuplicated(information: any): Promise<any>{
 
-        const foundFraccionamiento = await this.fraccionamientoRepository.findOne({where: {idFraccionamiento: information.idFraccionamiento}});
+        const foundFraccionamiento: Fraccionamiento = await this.fraccionamientoRepository.findOne({where: {idFraccionamiento: information.idFraccionamiento}});
 
-        const terreno = await this.terrenoRepository.findOne({where: {noManzana: information.noManzana, noLote: information.noLote, fraccionamiento: foundFraccionamiento, estatus: Estatus.ACTIVO}});
+        const terreno: Terreno = await this.terrenoRepository.findOne({where: { noManzana: information.noManzana, noLote: information.noLote, fraccionamiento: foundFraccionamiento, estatus: Estatus.ACTIVO }});
 
-        if(terreno){
-            return true;
+        if(terreno == null){
+            return false;
         }
 
-        return false;
+        return true;
 
     }
 
